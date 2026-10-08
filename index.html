@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaterShield</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>💧 WaterShield</h1>
+            <p>Community Water Early-Warning System</p>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <h2>Protect your community from water shortages.</h2>
+            <p>
+                Enter your community's current water situation
+                to estimate shortage risk and receive an action plan.
+            </p>
+        </section>
+
+        <section class="card">
+
+            <h2>Community Water Data</h2>
+
+            <div class="form-grid">
+
+                <div class="input-group">
+                    <label>Community Name</label>
+                    <input id="communityName" type="text"
+                           placeholder="e.g. Sunrise Community">
+                </div>
+
+                <div class="input-group">
+                    <label>Tank Capacity (Litres)</label>
+                    <input id="tankCapacity" type="number"
+                           placeholder="20000">
+                </div>
+
+                <div class="input-group">
+                    <label>Current Water Level (Litres)</label>
+                    <input id="currentWater" type="number"
+                           placeholder="11800">
+                </div>
+
+                <div class="input-group">
+                    <label>Daily Usage (Litres)</label>
+                    <input id="dailyUsage" type="number"
+                           placeholder="3100">
+                </div>
+
+                <div class="input-group">
+                    <label>Expected Inflow (Litres)</label>
+                    <input id="expectedInflow" type="number"
+                           placeholder="5000">
+                </div>
+
+                <div class="input-group">
+                    <label>Expected Inflow In (Days)</label>
+                    <input id="inflowDays" type="number"
+                           placeholder="2">
+                </div>
+
+            </div>
+
+            <button onclick="calculateRisk()">
+                Analyze Water Risk
+            </button>
+
+        </section>
+
+        <section id="result" class="result-card hidden">
+
+            <h2>WaterShield Analysis</h2>
+
+            <div class="risk-box">
+                <span>SHORTAGE RISK</span>
+                <strong id="riskLevel">--</strong>
+            </div>
+
+            <div class="results-grid">
+
+                <div>
+                    <p>Estimated water remaining</p>
+                    <h3 id="daysRemaining">--</h3>
+                </div>
+
+                <div>
+                    <p>Estimated shortage</p>
+                    <h3 id="shortageDate">--</h3>
+                </div>
+
+            </div>
+
+            <div class="recommendation">
+                <h3>Recommended Action</h3>
+                <p id="recommendationText">
+                    --
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>WaterShield • Built for Environmental Hacks 2026</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
