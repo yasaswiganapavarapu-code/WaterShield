@@ -35,32 +35,61 @@ function calculateRisk() {
         return;
     }
 
-    // Estimate how many days the current water can support
-    const currentDays = currentWater / dailyUsage;
+    // Function to simulate water usage
+    function simulateWater(usagePerDay) {
+        let water = currentWater;
+        let shortageInDays = null;
 
-    // Estimate water remaining when the expected supply arrives
-    const waterAtInflow = currentWater - (dailyUsage * inflowDays);
+        const MAX_FORECAST_DAYS = 30;
 
-    // Calculate shortage date based on current supply
-    const today = new Date();
-    const shortageDate = new Date(today);
-    shortageDate.setDate(
-        today.getDate() + Math.ceil(currentDays)
-    );
+        for (let day = 1; day <= MAX_FORECAST_DAYS; day++) {
 
-    // Calculate risk
+            // Daily consumption
+            water -= usagePerDay;
+
+            // Expected supply arrives
+            if (day === inflowDays) {
+                water += expectedInflow;
+
+                // Tank cannot exceed capacity
+                water = Math.min(water, tankCapacity);
+            }
+
+            // Shortage detected
+            if (water <= 0) {
+                shortageInDays = day;
+                break;
+            }
+        }
+
+        // No shortage within 30 days
+        if (shortageInDays === null) {
+            shortageInDays = 30;
+        }
+
+        return shortageInDays;
+    }
+
+    // Normal forecast
+    const shortageInDays = simulateWater(dailyUsage);
+
+    // What-if forecast: reduce consumption by 10%
+    const reducedUsage = dailyUsage * 0.90;
+    const savedShortageInDays = simulateWater(reducedUsage);
+
+    // Determine risk
     let riskLevel;
     let recommendation;
 
-    if (currentDays <= 1) {
+    if (shortageInDays <= 1) {
         riskLevel = "CRITICAL";
         recommendation =
             "Arrange additional water supply immediately and reduce non-essential consumption.";
-    } else if (currentDays <= 3) {
+    } else if (shortageInDays <= 3) {
         riskLevel = "HIGH";
         recommendation =
             "Arrange a tanker within 2 days and reduce non-essential water usage.";
-    } else if (currentDays <= 5) {
+    } else if (shortageInDays <= 5) {
         riskLevel = "MEDIUM";
         recommendation =
             "Monitor consumption closely and reduce non-essential water usage.";
@@ -70,33 +99,62 @@ function calculateRisk() {
             "Water supply looks stable. Continue monitoring daily consumption.";
     }
 
-    // Display results
+    // Calculate shortage date
+    const today = new Date();
+    const shortageDate = new Date(today);
+
+    shortageDate.setDate(
+        today.getDate() + shortageInDays
+    );
+
+    // Display main result
     document.getElementById("result").classList.remove("hidden");
 
-    document.getElementById("riskLevel").textContent = riskLevel;
+    document.getElementById("riskLevel").textContent =
+        riskLevel;
 
     document.getElementById("daysRemaining").textContent =
-        currentDays.toFixed(1) + " days";
+        shortageInDays + " days";
 
     document.getElementById("shortageDate").textContent =
-        shortageDate.toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-        });
+        shortageInDays >= 30
+            ? "No shortage in next 30 days"
+            : shortageDate.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
 
     document.getElementById("recommendationText").textContent =
         recommendation;
 
-    console.log("WaterShield Analysis:", {
+    // Display What-If scenario
+    document.getElementById("currentPlan").textContent =
+        shortageInDays >= 30
+            ? "No shortage in next 30 days"
+            : shortageInDays + " days until shortage";
+
+    document.getElementById("savedPlan").textContent =
+        savedShortageInDays >= 30
+            ? "No shortage in next 30 days"
+            : savedShortageInDays + " days until shortage";
+
+    const waterSaved = dailyUsage * 0.10;
+
+    document.getElementById("waterSaved").textContent =
+        Math.round(waterSaved) + " litres/day";
+
+    // Console information
+    console.log("WaterShield Forecast:", {
         communityName,
         tankCapacity,
         currentWater,
         dailyUsage,
         expectedInflow,
         inflowDays,
-        waterAtInflow,
-        currentDays,
+        shortageInDays,
+        savedShortageInDays,
+        waterSaved,
         riskLevel
     });
 }
