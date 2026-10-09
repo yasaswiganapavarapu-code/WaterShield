@@ -108,6 +108,26 @@ function calculateRisk() {
     );
 
     // Display main result
+    const waterPercentage = Math.min(
+    100,
+    Math.max(0, (currentWater / tankCapacity) * 100)
+);
+
+ const waterBar = document.getElementById("waterLevelBar");
+
+waterBar.style.width = waterPercentage + "%";
+
+if (waterPercentage > 50) {
+    waterBar.style.backgroundColor = "#16a34a";
+} else if (waterPercentage >= 25) {
+    waterBar.style.backgroundColor = "#eab308";
+} else {
+    waterBar.style.backgroundColor = "#dc2626";
+}
+
+document.getElementById("waterLevelText").textContent =
+    Math.round(waterPercentage) + "% Full (" +
+    currentWater.toLocaleString("en-IN") + " litres)";
     document.getElementById("result").classList.remove("hidden");
 
     document.getElementById("riskLevel").textContent =
@@ -143,6 +163,10 @@ function calculateRisk() {
 
     document.getElementById("waterSaved").textContent =
         Math.round(waterSaved) + " litres/day";
+        document.getElementById("savingsImpact").textContent =
+    "Your community could save " +
+    Math.round(waterSaved) +
+    " litres every day by reducing usage by 10%.";
 
     // Console information
     console.log("WaterShield Forecast:", {
@@ -157,4 +181,4 @@ function calculateRisk() {
         waterSaved,
         riskLevel
     });
-}
+}``
